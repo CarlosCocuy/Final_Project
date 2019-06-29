@@ -17,6 +17,7 @@ from tqdm import tqdm_notebook
 import warnings
 warnings.filterwarnings("ignore")
 count=1
+
 #### Input params ##################
 test_size = 0.2                 # proportion of dataset to be used as test set
 cv_size = 0.2                   # proportion of dataset to be used as cross-validation set
@@ -25,10 +26,6 @@ Nmax = 10                       # for feature at day t, we use lags from t-1, t-
 fontsize = 14
 ticklabelsize = 14
 ####################################
-field_names=['ticker','RMSE','R2', 'MAPE', 'N_OPT']
-with open('lineregOut.csv', 'a') as f:
-    writer = csv.writer(f)
-    writer.writerow(field_names)
 def get_preds_lin_reg(d, target_col, N, pred_min, offset):
     """
     Given a dataframe, get prediction at timestep t using values from t-1, t-2, ..., t-N.
@@ -73,7 +70,7 @@ def get_mape(y_true, y_pred):
     return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
 import os
 
-directory_in_str = 'splitdata'
+directory_in_str = 'fang'
 
 directory = os.fsencode(directory_in_str)
 
@@ -85,7 +82,7 @@ for file in os.listdir(directory):
 
 
         # Convert Date column to datetime
-        df.loc[:, 'Date'] = pd.to_datetime(df['Date'],format='%Y-%m-%d')
+        df.loc[:, 'date'] = pd.to_datetime(df['date'],format='%m/%d/%Y')
 
         # Change all column headings to be lower case, and remove spacing
         df.columns = [str(x).lower().replace(' ', '_') for x in df.columns]
@@ -137,12 +134,10 @@ for file in os.listdir(directory):
 
         ticker = filename.replace('.csv', '')
         # ticker = ticker.replace('splitdata/','')
-        count=count+1
 
+        count=count+1
         fields=[ticker,RMSE,R2, MAPE, N_opt]
-        with open('lineregOut.csv', 'a') as f:
-            writer = csv.writer(f)
-            writer.writerow(fields)
+        test.to_csv('faang_out/' + filename)
 
         continue
     else:
